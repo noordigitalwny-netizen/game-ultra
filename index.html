@@ -108,6 +108,14 @@
     #alive-box { position: absolute; top: 75px; right: 20px; background: rgba(15, 25, 45, 0.85); border: 2px solid #00d2ff; color: #fff; padding: 6px 14px; border-radius: 8px; font-size: 18px; z-index: 20; }
     #hp-box { position: absolute; top: 125px; right: 20px; background: rgba(45, 15, 15, 0.85); border: 2px solid #ff3333; color: #fff; padding: 6px 14px; border-radius: 8px; font-size: 18px; z-index: 20; }
     
+    /* MINIMAP RADAR */
+    #minimap-container {
+      position: absolute; top: 180px; right: 20px; width: 130px; height: 130px;
+      background: rgba(10, 20, 35, 0.85); border: 2px solid #00ff88; border-radius: 50%;
+      z-index: 20; overflow: hidden; display: none; box-shadow: 0 0 15px rgba(0,255,136,0.3);
+    }
+    #minimap-canvas { width: 100%; height: 100%; }
+
     #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 26px; pointer-events: none; z-index: 20; }
     #crosshair.hit { color: #ff3333; transform: translate(-50%, -50%) scale(1.5); }
 
@@ -160,12 +168,10 @@
       #joystick-zone, .touch-btn { display: none; }
     }
   </style>
-  <!-- PeerJS for Real-Time P2P Real Player Connections -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 </head>
 <body>
 
-  <!-- MAIN MENU -->
   <div id="main-menu" class="menu-screen">
     <div class="coin-badge" style="position:relative; top:0; right:0; margin-bottom:15px;">
       <div class="coin-icon"></div>
@@ -179,15 +185,14 @@
     <button class="menu-btn danger" onclick="openSettings()">Settings & FPS</button>
   </div>
 
-  <!-- USERNAME MODAL -->
   <div id="username-modal" class="menu-screen" style="display:none; background:rgba(0,0,0,0.85);">
     <div class="modal-card">
       <h2 style="color:#00ff88; margin-top:0; font-size:26px;">Choose Username</h2>
       <p style="color:#aaa; font-family:'Arial',sans-serif; font-size:13px;">No profanity allowed.</p>
       <input type="text" id="username-input" class="modal-input" placeholder="e.g. ProGamer99" maxlength="15">
       <div style="margin-top:15px; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px;">
-        <p style="color:#00d2ff; font-family:'Arial',sans-serif; font-size:12px; margin-bottom:5px;">Room Code (Leave blank to Host, or enter friend's Room ID to Join)</p>
-        <input type="text" id="room-input" class="modal-input" placeholder="Room Code (optional)" style="font-size:14px; padding:8px;">
+        <p style="color:#00d2ff; font-family:'Arial',sans-serif; font-size:12px; margin-bottom:5px;">5-Digit Room Code (Leave blank to Host, or enter friend's Code to Join)</p>
+        <input type="text" id="room-input" class="modal-input" placeholder="e.g. 48392" maxlength="5" style="font-size:16px; padding:8px; letter-spacing:2px;">
       </div>
       <div id="username-error" style="color:#ff3333; font-family:'Arial',sans-serif; font-size:12px; margin:8px 0; display:none;"></div>
       <button class="menu-btn online" style="width:100%; margin:5px 0;" onclick="connectOnline()">Connect to Lobby</button>
@@ -195,7 +200,6 @@
     </div>
   </div>
 
-  <!-- ONLINE LOBBY SCREEN -->
   <div id="lobby-screen" class="menu-screen" style="display:none;">
     <div class="lobby-box">
       <div class="lobby-header">
@@ -203,8 +207,7 @@
         <div class="lobby-sub" id="room-code-display">Your Room Code: Generating...</div>
       </div>
       <div class="lobby-player-list" id="lobby-player-list">
-        <!-- Populated with real connected players -->
-      </div>
+        </div>
       <div style="padding:15px; background:rgba(0,0,0,0.3); border-top:2px solid #00ff88; display:flex; justify-content:space-between; align-items:center;">
         <button class="menu-btn online" style="padding:10px 25px; font-size:16px; margin:0;" onclick="startOnlineMatch()">Start Match Now</button>
         <button class="menu-btn danger" style="padding:8px 20px; font-size:14px; margin:0;" onclick="cancelLobby()">Leave</button>
@@ -212,7 +215,6 @@
     </div>
   </div>
 
-  <!-- SHOP MENU -->
   <div id="shop-menu" class="menu-screen" style="display:none;">
     <div class="coin-badge" style="position:relative; top:0; right:0; margin-bottom:15px;">
       <div class="coin-icon"></div>
@@ -223,7 +225,6 @@
     <button class="menu-btn secondary" onclick="closeShop()">Back to Menu</button>
   </div>
 
-  <!-- SETTINGS MENU -->
   <div id="settings-menu" class="menu-screen" style="display:none;">
     <h1 class="menu-title" style="font-size:38px;">Game Settings</h1>
     <div class="menu-subtitle">Select Target Frame Rate (FPS)</div>
@@ -255,6 +256,10 @@
   <div class="coin-badge">
     <div class="coin-icon"></div>
     <div class="coin-text" id="hud-coins">0</div>
+  </div>
+
+  <div id="minimap-container">
+    <canvas id="minimap-canvas" width="130" height="130"></canvas>
   </div>
 
   <div id="notification-banner"></div>
@@ -316,6 +321,7 @@
     let connectedPeers = [];
     let isHost = false;
     let myPeerId = '';
+    let currentRoomCode = '';
 
     function promptUsername() {
       document.getElementById('main-menu').style.display = 'none';
@@ -327,6 +333,10 @@
     function closeUsernameModal() {
       document.getElementById('username-modal').style.display = 'none';
       document.getElementById('main-menu').style.display = 'flex';
+    }
+
+    function generate5DigitCode() {
+      return Math.floor(10000 + Math.random() * 90000).toString();
     }
 
     function connectOnline() {
@@ -356,24 +366,40 @@
     }
 
     function initPeerConnection(roomToJoin) {
-      peer = new Peer();
-
-      peer.on('open', (id) => {
-        myPeerId = id;
-        document.getElementById('lobby-screen').style.display = 'flex';
-
-        if (roomToJoin) {
+      if (roomToJoin) {
+        // Joining existing room
+        currentRoomCode = roomToJoin;
+        peer = new Peer();
+        peer.on('open', (id) => {
+          myPeerId = id;
+          document.getElementById('lobby-screen').style.display = 'flex';
           isHost = false;
-          document.getElementById('room-code-display').innerText = `Connected to Room: ${roomToJoin}`;
-          conn = peer.connect(roomToJoin);
+          document.getElementById('room-code-display').innerText = `Connected to 5-Digit Room: ${roomToJoin}`;
+          conn = peer.connect('ur-' + roomToJoin);
           setupConnectionEvents();
-        } else {
+        });
+      } else {
+        // Hosting new room with 5-digit custom ID
+        currentRoomCode = generate5DigitCode();
+        peer = new Peer('ur-' + currentRoomCode);
+
+        peer.on('open', (id) => {
+          myPeerId = id;
+          document.getElementById('lobby-screen').style.display = 'flex';
           isHost = true;
-          document.getElementById('room-code-display').innerText = `Your Room Code: ${id} (Share this with friends!)`;
+          document.getElementById('room-code-display').innerText = `Your 5-Digit Room Code: ${currentRoomCode} (Share with friends!)`;
           connectedPeers = [{ id: id, name: username }];
           renderLobbyList();
-        }
-      });
+        });
+
+        peer.on('error', (err) => {
+          // If 5-digit code collides, try generating another one automatically
+          if (err.type === 'unavailable-id') {
+            peer.destroy();
+            initPeerConnection('');
+          }
+        });
+      }
 
       peer.on('connection', (incomingConn) => {
         conn = incomingConn;
@@ -393,7 +419,6 @@
             connectedPeers.push({ id: conn.peer, name: data.name });
             renderLobbyList();
             if (isHost) {
-              // Broadcast updated player list
               conn.send({ type: 'LOBBY_UPDATE', players: connectedPeers });
             }
           }
@@ -654,8 +679,10 @@
     gun.position.set(0.35, -0.3, -0.6);
     camera.add(gun);
 
-    // REMOTE PLAYERS MAPPING (For Real Connected Players)
+    // REMOTE PLAYERS MAPPING
     const remotePlayers = {};
+    const remotePlayerData = {};
+
     function updateRemotePlayer(data) {
       if (!remotePlayers[data.id]) {
         const rMesh = new THREE.Group();
@@ -667,6 +694,7 @@
       }
       remotePlayers[data.id].position.set(data.x, data.y, data.z);
       remotePlayers[data.id].rotation.y = data.yaw;
+      remotePlayerData[data.id] = { x: data.x, z: data.z };
     }
 
     let velocityY = 0;
@@ -826,6 +854,7 @@
 
     function startGame() {
       document.getElementById('main-menu').style.display = 'none';
+      document.getElementById('minimap-container').style.display = 'block';
       gameStarted = true;
       playerGroup.position.set(0, 3, 0);
       velocityY = 0; yaw = 0; pitch = 0;
@@ -843,6 +872,68 @@
 
     function returnToMenu() {
       location.reload();
+    }
+
+    // MINIMAP RENDERER LOGIC
+    const minimapCanvas = document.getElementById('minimap-canvas');
+    const mCtx = minimapCanvas.getContext('2d');
+
+    function renderMinimap() {
+      if (!gameStarted || isGameOver) return;
+      mCtx.clearRect(0, 0, 130, 130);
+
+      // Background circle map
+      mCtx.fillStyle = 'rgba(40, 120, 60, 0.85)';
+      mCtx.beginPath();
+      mCtx.arc(65, 65, 60, 0, Math.PI * 2);
+      mCtx.fill();
+      mCtx.lineWidth = 2;
+      mCtx.strokeStyle = '#00ff88';
+      mCtx.stroke();
+
+      const pPos = playerGroup.position;
+      const mapScale = 60 / islandRadius; // Map radius covers island radius
+
+      // Draw remote players on minimap
+      for (let id in remotePlayerData) {
+        const rp = remotePlayerData[id];
+        const dx = (rp.x - pPos.x) * mapScale;
+        const dz = (rp.z - pPos.z) * mapScale;
+        const dist = Math.hypot(dx, dz);
+        
+        let mx = 65 + dx;
+        let mz = 65 + dz;
+        // Clamp to circle edge if out of mini radar bounds
+        if (dist > 52) {
+          mx = 65 + (dx / dist) * 52;
+          mz = 65 + (dz / dist) * 52;
+        }
+
+        mCtx.fillStyle = '#00d2ff';
+        mCtx.beginPath();
+        mCtx.arc(mx, mz, 4, 0, Math.PI * 2);
+        mCtx.fill();
+        mCtx.strokeStyle = '#fff';
+        mCtx.lineWidth = 1;
+        mCtx.stroke();
+      }
+
+      // Draw local player center indicator
+      mCtx.fillStyle = '#00ff00';
+      mCtx.beginPath();
+      mCtx.arc(65, 65, 5, 0, Math.PI * 2);
+      mCtx.fill();
+      mCtx.strokeStyle = '#fff';
+      mCtx.lineWidth = 1.5;
+      mCtx.stroke();
+
+      // Direction line for local player facing
+      mCtx.strokeStyle = '#ffd700';
+      mCtx.lineWidth = 2;
+      mCtx.beginPath();
+      mCtx.moveTo(65, 65);
+      mCtx.lineTo(65 - Math.sin(yaw) * 12, 65 - Math.cos(yaw) * 12);
+      mCtx.stroke();
     }
 
     let lastTime = performance.now();
@@ -888,6 +979,8 @@
             });
             netSyncTimer = 0;
           }
+
+          renderMinimap();
         }
 
         if (gameStarted && !isGameOver) {
