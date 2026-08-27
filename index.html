@@ -1,3 +1,2474 @@
+
+Conversation with Gemini
+I have the following code from spck editor. I'm not sure if the scope is included in this code. If it is, please update to make it a functioning scope. If it is not included, please include it. Right click should enable and disable the scope. Left click should shoot:
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Universe Royale 3D - Real Online & Solo Bots</title>
+
+  <style>
+
+    * { box-sizing: border-box; touch-action: none; user-select: none; }
+
+    body { margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: 'Impact', 'Arial Black', sans-serif; }
+
+
+
+    #yt-promo {
+
+      position: absolute; top: 10px; left: 10px; z-index: 250;
+
+      display: flex; align-items: center; background: rgba(0, 0, 0, 0.75);
+
+      padding: 6px 14px; border-radius: 8px; color: #fff;
+
+      font-family: 'Arial', sans-serif; font-weight: bold; font-size: 15px;
+
+      border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+
+    }
+
+    .yt-icon {
+
+      width: 28px; height: 20px; background: #FF0000; border-radius: 4px;
+
+      position: relative; margin-right: 10px;
+
+    }
+
+    .yt-icon::after {
+
+      content: ''; position: absolute; top: 50%; left: 50%;
+
+      transform: translate(-35%, -50%);
+
+      border-left: 8px solid white; border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+
+    }
+
+
+
+    #menu-real-players {
+
+      position: absolute; top: 58px; left: 10px; z-index: 250;
+
+      background: rgba(0, 0, 0, 0.85); border: 2px solid #00d2ff;
+
+      color: #00d2ff; font-family: 'Impact', sans-serif; font-size: 14px;
+
+      padding: 6px 14px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+
+      letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
+
+    }
+
+
+
+    .menu-screen {
+
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+
+      background: linear-gradient(135deg, rgba(10,15,30,0.95), rgba(25,10,40,0.95));
+
+      z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center;
+
+      color: #fff; text-align: center; padding: 20px;
+
+    }
+
+    .menu-title {
+
+      font-size: 52px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px;
+
+      background: linear-gradient(180deg, #fff7a1 0%, #ff8800 50%, #cc3300 100%);
+
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+      text-shadow: 0 0 30px rgba(255, 136, 0, 0.6);
+
+    }
+
+    .menu-subtitle { font-family: 'Arial', sans-serif; font-size: 16px; color: #00d2ff; margin-bottom: 25px; letter-spacing: 2px; }
+
+
+
+    .menu-btn {
+
+      background: linear-gradient(180deg, #00d2ff 0%, #0077ff 100%);
+
+      color: #fff; border: 2px solid #fff; padding: 14px 35px; font-size: 20px;
+
+      border-radius: 12px; cursor: pointer; margin: 8px; text-transform: uppercase;
+
+      box-shadow: 0 6px 20px rgba(0, 119, 255, 0.5); transition: transform 0.1s, background 0.2s;
+
+      font-family: 'Impact', sans-serif; letter-spacing: 2px;
+
+    }
+
+    .menu-btn:active { transform: scale(0.95); }
+
+    .menu-btn.secondary { background: linear-gradient(180deg, #ffaa00 0%, #cc6600 100%); box-shadow: 0 6px 20px rgba(255, 170, 0, 0.5); }
+
+    .menu-btn.danger { background: linear-gradient(180deg, #ff3333 0%, #990000 100%); box-shadow: 0 6px 20px rgba(255, 51, 51, 0.5); }
+
+    .menu-btn.online { background: linear-gradient(180deg, #00ff88 0%, #008844 100%); box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5); }
+
+
+
+    .lobby-box {
+
+      width: 90%; max-width: 650px; height: 75vh;
+
+      background: rgba(15, 20, 35, 0.95); border: 3px solid #00ff88;
+
+      border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;
+
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+
+    }
+
+    .lobby-header {
+
+      background: rgba(0, 255, 136, 0.15); padding: 15px; border-bottom: 2px solid #00ff88;
+
+      font-size: 24px; color: #00ff88; letter-spacing: 2px;
+
+    }
+
+    .lobby-sub { font-family: 'Arial', sans-serif; font-size: 13px; color: #ccc; margin-top: 5px; }
+
+    .lobby-player-list {
+
+      flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px;
+
+      text-align: left; font-family: 'Arial', sans-serif;
+
+    }
+
+    .player-row {
+
+      background: rgba(255, 255, 255, 0.08); padding: 10px 15px; border-radius: 8px;
+
+      display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #00d2ff;
+
+      font-weight: bold; font-size: 15px; color: #fff;
+
+    }
+
+    .player-row.is-you { border-left-color: #00ff88; background: rgba(0, 255, 136, 0.15); }
+
+
+
+    .modal-card {
+
+      background: rgba(20, 25, 45, 0.95); border: 3px solid #00d2ff; padding: 30px;
+
+      border-radius: 16px; width: 90%; max-width: 450px; text-align: center;
+
+      box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+
+    }
+
+    .modal-input {
+
+      width: 100%; padding: 12px 16px; font-size: 18px; border-radius: 8px;
+
+      border: 2px solid #fff; background: rgba(0,0,0,0.6); color: #fff;
+
+      margin: 10px 0; font-family: 'Arial', sans-serif; outline: none; text-align: center;
+
+    }
+
+
+
+    .coin-badge {
+
+      position: absolute; top: 20px; right: 20px; z-index: 60;
+
+      background: rgba(0, 0, 0, 0.85); border: 2px solid #ffd700;
+
+      padding: 8px 18px; border-radius: 30px; display: flex; align-items: center; gap: 10px;
+
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+
+    }
+
+    .coin-icon { width: 24px; height: 24px; background: #ffd700; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 8px #ffd700; }
+
+    .coin-text { font-size: 20px; color: #ffd700; font-family: 'Impact', sans-serif; letter-spacing: 1px; }
+
+
+
+    .shop-container { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; max-width: 900px; max-height: 70vh; overflow-y: auto; margin-bottom: 25px; padding: 10px; }
+
+    .shop-card {
+
+      background: rgba(25, 25, 40, 0.9); border: 2px solid rgba(255,255,255,0.2);
+
+      border-radius: 12px; padding: 15px; width: 200px; text-align: center;
+
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: space-between;
+
+    }
+
+    .shop-card.owned { border-color: #00ff66; }
+
+    .shop-card h3 { margin: 5px 0; font-size: 18px; color: #fff; }
+
+    .shop-card p { font-family: 'Arial', sans-serif; font-size: 11px; color: #aaa; margin: 6px 0; }
+
+    .shop-card .price { color: #ffd700; font-size: 16px; margin-bottom: 10px; }
+
+
+
+    #fps { position: absolute; top: 15px; left: 12px; background: rgba(0,0,0,0.6); color: #00ff66; font-size: 13px; font-family: monospace; padding: 4px 8px; border-radius: 4px; z-index: 20; display: none; }
+
+    #alive-box { position: absolute; top: 15px; right: 20px; background: rgba(15, 25, 45, 0.85); border: 2px solid #00d2ff; color: #fff; padding: 6px 14px; border-radius: 8px; font-size: 18px; z-index: 20; display: none; }
+
+    #hp-box { position: absolute; top: 65px; right: 20px; background: rgba(45, 15, 15, 0.85); border: 2px solid #ff3333; color: #fff; padding: 6px 14px; border-radius: 8px; font-size: 18px; z-index: 20; display: none; }
+
+    
+
+    #minimap-container {
+
+      position: absolute; top: 120px; right: 20px; width: 130px; height: 130px;
+
+      background: rgba(10, 20, 35, 0.85); border: 2px solid #00ff88; border-radius: 50%;
+
+      z-index: 20; overflow: hidden; display: none; box-shadow: 0 0 15px rgba(0,255,136,0.3);
+
+    }
+
+    #minimap-canvas { width: 100%; height: 100%; }
+
+
+
+    #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 26px; pointer-events: none; z-index: 20; display: none; }
+
+    #crosshair.hit { color: #ff3333; transform: translate(-50%, -50%) scale(1.5); }
+
+
+
+    #notification-banner {
+
+      position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%);
+
+      background: rgba(0, 0, 0, 0.9); border: 2px solid #ffd700; color: #ffd700;
+
+      padding: 12px 24px; border-radius: 12px; font-size: 24px; z-index: 100;
+
+      display: none; text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+
+    }
+
+    #chest-prompt {
+
+      position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%);
+
+      background: rgba(0,0,0,0.8); border: 2px solid #00ff66; color: #00ff66;
+
+      padding: 8px 16px; border-radius: 8px; font-size: 16px; z-index: 30; display: none;
+
+    }
+
+
+
+    #scope-overlay {
+
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; display: none;
+
+      background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.95) 100%);
+
+    }
+
+    #scope-overlay::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(0,255,0,0.7); }
+
+    #scope-overlay::after { content: ''; position: absolute; top: 0; left: 50%; width: 2px; height: 100%; background: rgba(0,255,0,0.7); }
+
+
+
+    #hotbar {
+
+      position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+
+      display: none; gap: 10px; z-index: 20;
+
+    }
+
+    .hotbar-slot {
+
+      width: 60px; height: 60px; background: rgba(0, 0, 0, 0.75);
+
+      border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 10px;
+
+      position: relative; display: flex; align-items: center; justify-content: center;
+
+      color: #fff; font-size: 11px; text-align: center; font-family: 'Arial', sans-serif; font-weight: bold; padding: 4px;
+
+    }
+
+    .hotbar-slot.active { border-color: #ffd700; box-shadow: 0 0 15px #ffd700; background: rgba(50, 40, 0, 0.85); }
+
+    .slot-num { position: absolute; top: 3px; left: 6px; font-size: 11px; color: #00d2ff; font-family: 'Impact', sans-serif; }
+
+
+
+    #build-menu { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; z-index: 20; }
+
+    .build-btn { background: rgba(0, 0, 0, 0.7); border: 2px solid #ffaa00; color: #ffaa00; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+
+
+
+    #joystick-zone { position: absolute; bottom: 30px; left: 30px; width: 140px; height: 140px; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; z-index: 40; display: none; }
+
+    #joystick-knob { position: absolute; top: 35px; left: 35px; width: 70px; height: 70px; background: rgba(255, 255, 255, 0.6); border-radius: 50%; pointer-events: none; }
+
+
+
+    .touch-btn { position: absolute; z-index: 40; background: rgba(255, 255, 255, 0.25); border: 2px solid #fff; color: #fff; border-radius: 50%; width: 60px; height: 60px; display: none; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
+
+    #btn-fire { bottom: 30px; right: 30px; background: rgba(255, 50, 50, 0.6); width: 80px; height: 80px; font-size: 16px; }
+
+    #btn-jump { bottom: 130px; right: 30px; background: rgba(50, 150, 255, 0.6); }
+
+    #btn-wall { bottom: 30px; right: 130px; background: rgba(255, 170, 0, 0.6); }
+
+    #btn-ramp { bottom: 100px; right: 110px; background: rgba(255, 170, 0, 0.6); }
+
+    #btn-floor { bottom: 170px; right: 80px; background: rgba(255, 170, 0, 0.6); }
+
+
+
+    @media (min-width: 1024px) {
+
+      #joystick-zone, .touch-btn { display: none !important; }
+
+    }
+
+  </style>
+
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+</head>
+
+<body>
+
+
+
+  <div id="yt-promo">
+
+    <div class="yt-icon"></div>
+
+    Subscribe to Ayaans Universe
+
+  </div>
+
+
+
+  <div id="menu-real-players">🌐 Real Players: <span id="menu-real-count">0</span></div>
+
+
+
+  <div id="main-menu" class="menu-screen">
+
+    <div class="coin-badge" style="position:relative; top:0; right:0; margin-bottom:15px;">
+
+      <div class="coin-icon"></div>
+
+      <div class="coin-text" id="menu-coins">0</div>
+
+    </div>
+
+    <h1 class="menu-title">Universe Royale 3D</h1>
+
+    <div class="menu-subtitle">Real P2P Multiplayer & Solo Practice</div>
+
+    <button class="menu-btn online" onclick="promptUsername()">🌐 Online Multiplayer</button>
+
+    <button class="menu-btn" onclick="startSolo()">Solo Practice (Bots)</button>
+
+    <button class="menu-btn secondary" onclick="openShop()">Weapon Shop</button>
+
+    <button class="menu-btn danger" onclick="openSettings()">Settings & FPS</button>
+
+  </div>
+
+
+
+  <div id="username-modal" class="menu-screen" style="display:none; background:rgba(0,0,0,0.85);">
+
+    <div class="modal-card">
+
+      <h2 style="color:#00ff88; margin-top:0; font-size:26px;">Choose Username</h2>
+
+      <p style="color:#aaa; font-family:'Arial',sans-serif; font-size:13px;">No profanity allowed.</p>
+
+      <input type="text" id="username-input" class="modal-input" placeholder="e.g. ProGamer99" maxlength="15">
+
+      <div style="margin-top:15px; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px;">
+
+        <p style="color:#00d2ff; font-family:'Arial',sans-serif; font-size:12px; margin-bottom:5px;">5-Digit Room Code (Leave blank to Host, or enter friend's Code to Join)</p>
+
+        <input type="text" id="room-input" class="modal-input" placeholder="e.g. 48392" maxlength="5" style="font-size:16px; padding:8px; letter-spacing:2px;">
+
+      </div>
+
+      <div id="username-error" style="color:#ff3333; font-family:'Arial',sans-serif; font-size:12px; margin:8px 0; display:none;"></div>
+
+      <button class="menu-btn online" style="width:100%; margin:5px 0;" onclick="connectOnline()">Connect to Lobby</button>
+
+      <button class="menu-btn secondary" style="width:100%; margin:5px 0;" onclick="closeUsernameModal()">Back</button>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="lobby-screen" class="menu-screen" style="display:none;">
+
+    <div class="lobby-box">
+
+      <div class="lobby-header">
+
+        🌐 P2P ONLINE LOBBY
+
+        <div class="lobby-sub" id="room-code-display">Your Room Code: Generating...</div>
+
+      </div>
+
+      <div class="lobby-player-list" id="lobby-player-list"></div>
+
+      <div style="padding:15px; background:rgba(0,0,0,0.3); border-top:2px solid #00ff88; display:flex; justify-content:space-between; align-items:center;">
+
+        <button class="menu-btn online" style="padding:10px 25px; font-size:16px; margin:0;" onclick="startOnlineMatch()">Start Match Now</button>
+
+        <button class="menu-btn danger" style="padding:8px 20px; font-size:14px; margin:0;" onclick="cancelLobby()">Leave</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="shop-menu" class="menu-screen" style="display:none;">
+
+    <div class="coin-badge" style="position:relative; top:0; right:0; margin-bottom:15px;">
+
+      <div class="coin-icon"></div>
+
+      <div class="coin-text" id="shop-coins">0</div>
+
+    </div>
+
+    <h1 class="menu-title" style="font-size:38px;">Weapon Armory</h1>
+
+    <div class="shop-container" id="shop-items-grid"></div>
+
+    <button class="menu-btn secondary" onclick="closeShop()">Back to Menu</button>
+
+  </div>
+
+
+
+  <div id="settings-menu" class="menu-screen" style="display:none;">
+
+    <h1 class="menu-title" style="font-size:38px;">Game Settings</h1>
+
+    <div class="menu-subtitle">Select Target Frame Rate (FPS)</div>
+
+    <div style="display:flex; gap:15px; margin-bottom:30px;">
+
+      <button class="menu-btn" id="fps-30" onclick="setFps(30)">30 FPS</button>
+
+      <button class="menu-btn" id="fps-60" onclick="setFps(60)">60 FPS</button>
+
+      <button class="menu-btn" id="fps-120" onclick="setFps(120)">120 FPS</button>
+
+    </div>
+
+    <button class="menu-btn secondary" onclick="closeSettings()">Back to Menu</button>
+
+  </div>
+
+
+
+  <div id="victory-banner" class="menu-screen" style="display:none; background:rgba(0,0,0,0.9);">
+
+    <h1 class="menu-title" style="color:#ffd700;">VICTORY ROYALE</h1>
+
+    <div class="menu-subtitle" id="victory-sub">You conquered the island!</div>
+
+    <button class="menu-btn" onclick="returnToMenu()">Main Menu</button>
+
+  </div>
+
+
+
+  <div id="gameover-banner" class="menu-screen" style="display:none; background:rgba(0,0,0,0.9);">
+
+    <h1 class="menu-title" style="color:#ff3333;">ELIMINATED</h1>
+
+    <div class="menu-subtitle" id="gameover-sub">Better luck next time</div>
+
+    <button class="menu-btn danger" onclick="returnToMenu()">Main Menu</button>
+
+  </div>
+
+
+
+  <div class="coin-badge">
+
+    <div class="coin-icon"></div>
+
+    <div class="coin-text" id="hud-coins">0</div>
+
+  </div>
+
+
+
+  <div id="minimap-container">
+
+    <canvas id="minimap-canvas" width="130" height="130"></canvas>
+
+  </div>
+
+
+
+  <div id="notification-banner"></div>
+
+  <div id="chest-prompt">PRESS R TO OPEN CHEST</div>
+
+
+
+  <div id="fps">FPS: 0</div>
+
+  <div id="alive-box">⚔️ ALIVE: <span id="alive-count">100</span></div>
+
+  <div id="hp-box">❤️ HP: <span id="hp-count">100</span></div>
+
+  <div id="crosshair">+</div>
+
+  <div id="scope-overlay"></div>
+
+
+
+  <div id="hotbar">
+
+    <div class="hotbar-slot active" id="slot-0"><span class="slot-num">1</span><span id="slot-text-0">Pistol</span></div>
+
+    <div class="hotbar-slot" id="slot-1"><span class="slot-num">2</span><span id="slot-text-1">-</span></div>
+
+    <div class="hotbar-slot" id="slot-2"><span class="slot-num">3</span><span id="slot-text-2">-</span></div>
+
+  </div>
+
+
+
+  <div id="build-menu">
+
+    <div class="build-btn">Q: WALL</div>
+
+    <div class="build-btn">E: FLOOR</div>
+
+    <div class="build-btn">F: RAMP</div>
+
+    <div class="build-btn" style="border-color:#ffd700; color:#ffd700;">R: OPEN CHEST</div>
+
+  </div>
+
+
+
+  <div id="joystick-zone"><div id="joystick-knob"></div></div>
+
+  <div id="btn-fire" class="touch-btn">FIRE</div>
+
+  <div id="btn-jump" class="touch-btn">JUMP</div>
+
+  <div id="btn-wall" class="touch-btn">WALL</div>
+
+  <div id="btn-ramp" class="touch-btn">RAMP</div>
+
+  <div id="btn-floor" class="touch-btn">FLOOR</div>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+
+    let coins = parseInt(localStorage.getItem('ur_coins') || '0');
+
+    let fpsCap = parseInt(localStorage.getItem('ur_fps') || '60');
+
+    let inventory = JSON.parse(localStorage.getItem('ur_inventory') || '["pistol"]');
+
+    let username = localStorage.getItem('ur_username') || '';
+
+    
+
+    let matchSlots = [inventory[0] || 'pistol', null, null];
+
+    let activeSlotIndex = 0;
+
+    let matchKills = 0;
+
+
+
+    const weapons = {
+
+      pistol: { name: 'Pistol', damage: 35, cost: 0, scope: false },
+
+      shotgun: { name: 'Shotgun', damage: 45, cost: 50, scope: false },
+
+      sniper: { name: 'Sniper', damage: 50, cost: 1500, scope: true, fov: 25 },
+
+      mythic: { name: 'Falcon Scout', damage: 100, cost: 3500, scope: true, fov: 15 }
+
+    };
+
+
+
+    const badWords = ['damn', 'hell', 'crap', 'stupid', 'idiot', 'shit', 'fuck', 'bitch', 'ass', 'bastard', 'dick', 'piss', 'cunt', 'cock', 'pussy', 'whore', 'slut', 'nigger', 'fag', 'retard'];
+
+    function containsBadWord(text) {
+
+      const lower = text.toLowerCase();
+
+      return badWords.some(word => lower.includes(word));
+
+    }
+
+
+
+    let peer = null;
+
+    let conn = null;
+
+    let connectedPeers = [];
+
+    let isHost = false;
+
+    let myPeerId = '';
+
+    let currentRoomCode = '';
+
+    let isSoloMode = false;
+
+    let soloBots = [];
+
+
+
+    function updateMenuRealPlayersCounter() {
+
+      const otherPlayersCount = isHost ? Math.max(0, connectedPeers.length - 1) : (connectedPeers.length > 0 ? connectedPeers.length - 1 : 0);
+
+      const displayCount = (connectedPeers.length > 1) ? otherPlayersCount : 0;
+
+      document.getElementById('menu-real-count').innerText = displayCount;
+
+    }
+
+
+
+    function promptUsername() {
+
+      document.getElementById('main-menu').style.display = 'none';
+
+      document.getElementById('username-modal').style.display = 'flex';
+
+      const input = document.getElementById('username-input');
+
+      if (username) input.value = username;
+
+    }
+
+
+
+    function closeUsernameModal() {
+
+      document.getElementById('username-modal').style.display = 'none';
+
+      document.getElementById('main-menu').style.display = 'flex';
+
+    }
+
+
+
+    function generate5DigitCode() {
+
+      return Math.floor(10000 + Math.random() * 90000).toString();
+
+    }
+
+
+
+    function connectOnline() {
+
+      const input = document.getElementById('username-input');
+
+      const roomInput = document.getElementById('room-input');
+
+      const errBox = document.getElementById('username-error');
+
+      const cleanName = input.value.trim();
+
+      const targetRoom = roomInput.value.trim();
+
+
+
+      if (!cleanName || cleanName.length < 2) {
+
+        errBox.innerText = "Please enter at least 2 characters.";
+
+        errBox.style.display = 'block';
+
+        return;
+
+      }
+
+      if (containsBadWord(cleanName)) {
+
+        errBox.innerText = "⚠️ Inappropriate language is not allowed.";
+
+        errBox.style.display = 'block';
+
+        return;
+
+      }
+
+
+
+      username = cleanName;
+
+      localStorage.setItem('ur_username', username);
+
+      errBox.style.display = 'none';
+
+      document.getElementById('username-modal').style.display = 'none';
+
+
+
+      initPeerConnection(targetRoom);
+
+    }
+
+
+
+    function initPeerConnection(roomToJoin) {
+
+      isSoloMode = false;
+
+      if (roomToJoin) {
+
+        currentRoomCode = roomToJoin;
+
+        peer = new Peer();
+
+        peer.on('open', (id) => {
+
+          myPeerId = id;
+
+          document.getElementById('lobby-screen').style.display = 'flex';
+
+          isHost = false;
+
+          document.getElementById('room-code-display').innerText = `Connected to 5-Digit Room: ${roomToJoin}`;
+
+          conn = peer.connect('ur-' + roomToJoin);
+
+          setupConnectionEvents();
+
+        });
+
+      } else {
+
+        currentRoomCode = generate5DigitCode();
+
+        peer = new Peer('ur-' + currentRoomCode);
+
+
+
+        peer.on('open', (id) => {
+
+          myPeerId = id;
+
+          document.getElementById('lobby-screen').style.display = 'flex';
+
+          isHost = true;
+
+          document.getElementById('room-code-display').innerText = `Your 5-Digit Room Code: ${currentRoomCode} (Share with friends!)`;
+
+          connectedPeers = [{ id: id, name: username }];
+
+          updateMenuRealPlayersCounter();
+
+          renderLobbyList();
+
+        });
+
+
+
+        peer.on('error', (err) => {
+
+          if (err.type === 'unavailable-id') {
+
+            peer.destroy();
+
+            initPeerConnection('');
+
+          }
+
+        });
+
+      }
+
+
+
+      peer.on('connection', (incomingConn) => {
+
+        conn = incomingConn;
+
+        isHost = true;
+
+        setupConnectionEvents();
+
+      });
+
+    }
+
+
+
+    function setupConnectionEvents() {
+
+      conn.on('open', () => {
+
+        conn.send({ type: 'JOIN', name: username });
+
+      });
+
+
+
+      conn.on('data', (data) => {
+
+        if (data.type === 'JOIN') {
+
+          if (!connectedPeers.some(p => p.name === data.name)) {
+
+            connectedPeers.push({ id: conn.peer, name: data.name });
+
+            updateMenuRealPlayersCounter();
+
+            renderLobbyList();
+
+            if (isHost) {
+
+              conn.send({ type: 'LOBBY_UPDATE', players: connectedPeers });
+
+            }
+
+          }
+
+        } else if (data.type === 'LOBBY_UPDATE') {
+
+          connectedPeers = data.players;
+
+          updateMenuRealPlayersCounter();
+
+          renderLobbyList();
+
+        } else if (data.type === 'START_MATCH') {
+
+          document.getElementById('lobby-screen').style.display = 'none';
+
+          startGame();
+
+        } else if (data.type === 'PLAYER_POS') {
+
+          updateRemotePlayer(data);
+
+        } else if (data.type === 'PLAYER_HIT') {
+
+          if (data.targetId === myPeerId || (isHost && data.targetId === 'host')) {
+
+            playerHp -= data.damage;
+
+            document.getElementById('hp-count').innerText = Math.max(0, playerHp);
+
+            showNotification(`⚠️ Hit by ${data.shooter || 'Enemy'} for ${data.damage} DMG!`);
+
+            if (playerHp <= 0 && !isGameOver) {
+
+              isGameOver = true;
+
+              document.getElementById('gameover-banner').style.display = 'flex';
+
+              if (document.pointerLockElement) document.exitPointerLock();
+
+            }
+
+          }
+
+        }
+
+      });
+
+    }
+
+
+
+    function renderLobbyList() {
+
+      const listEl = document.getElementById('lobby-player-list');
+
+      listEl.innerHTML = '';
+
+      if(connectedPeers.length === 0) connectedPeers = [{name: username}];
+
+      connectedPeers.forEach((p, idx) => {
+
+        const isYou = (p.name === username);
+
+        const row = document.createElement('div');
+
+        row.className = `player-row ${isYou ? 'is-you' : ''}`;
+
+        row.innerHTML = `<span>#${idx+1} ${p.name || 'Player'}</span> <span style="font-size:12px; color:${isYou ? '#00ff88' : '#00d2ff'};">${isYou ? 'YOU' : 'REAL PLAYER'}</span>`;
+
+        listEl.appendChild(row);
+
+      });
+
+    }
+
+
+
+    function startOnlineMatch() {
+
+      if (conn && conn.open) {
+
+        conn.send({ type: 'START_MATCH' });
+
+      }
+
+      document.getElementById('lobby-screen').style.display = 'none';
+
+      startGame();
+
+    }
+
+
+
+    function cancelLobby() {
+
+      if (peer) peer.destroy();
+
+      connectedPeers = [];
+
+      updateMenuRealPlayersCounter();
+
+      document.getElementById('lobby-screen').style.display = 'none';
+
+      document.getElementById('main-menu').style.display = 'flex';
+
+    }
+
+
+
+    function updateHotbarUI() {
+
+      for (let i = 0; i < 3; i++) {
+
+        const slotEl = document.getElementById(`slot-${i}`);
+
+        const textEl = document.getElementById(`slot-text-${i}`);
+
+        const wKey = matchSlots[i];
+
+        slotEl.className = `hotbar-slot ${i === activeSlotIndex ? 'active' : ''}`;
+
+        textEl.innerText = wKey ? weapons[wKey].name : '-';
+
+      }
+
+    }
+
+    updateHotbarUI();
+
+
+
+    function showNotification(msg) {
+
+      const banner = document.getElementById('notification-banner');
+
+      banner.innerText = msg;
+
+      banner.style.display = 'block';
+
+      setTimeout(() => banner.style.display = 'none', 3000);
+
+    }
+
+
+
+    function updateCoinDisplays() {
+
+      document.getElementById('menu-coins').innerText = coins;
+
+      document.getElementById('shop-coins').innerText = coins;
+
+      document.getElementById('hud-coins').innerText = coins;
+
+      localStorage.setItem('ur_coins', coins);
+
+    }
+
+    updateCoinDisplays();
+
+
+
+    function setFps(val) {
+
+      fpsCap = val;
+
+      localStorage.setItem('ur_fps', val);
+
+      highlightFpsBtn();
+
+    }
+
+    function highlightFpsBtn() {
+
+      ['30', '60', '120'].forEach(f => {
+
+        const btn = document.getElementById(`fps-${f}`);
+
+        if(btn) btn.style.border = (parseInt(f) === fpsCap) ? '3px solid #00ff66' : '2px solid #fff';
+
+      });
+
+    }
+
+    highlightFpsBtn();
+
+
+
+    function openShop() {
+
+      document.getElementById('main-menu').style.display = 'none';
+
+      document.getElementById('shop-menu').style.display = 'flex';
+
+      renderShop();
+
+    }
+
+    function closeShop() {
+
+      document.getElementById('shop-menu').style.display = 'none';
+
+      document.getElementById('main-menu').style.display = 'flex';
+
+    }
+
+    function openSettings() {
+
+      document.getElementById('main-menu').style.display = 'none';
+
+      document.getElementById('settings-menu').style.display = 'flex';
+
+      highlightFpsBtn();
+
+    }
+
+    function closeSettings() {
+
+      document.getElementById('settings-menu').style.display = 'none';
+
+      document.getElementById('main-menu').style.display = 'flex';
+
+    }
+
+
+
+    function renderShop() {
+
+      const grid = document.getElementById('shop-items-grid');
+
+      grid.innerHTML = '';
+
+      for (let key in weapons) {
+
+        const w = weapons[key];
+
+        const owned = inventory.includes(key);
+
+        const card = document.createElement('div');
+
+        card.className = `shop-card ${owned ? 'owned' : ''}`;
+
+        card.innerHTML = `
+
+          <div>
+
+            <h3>${w.name}</h3>
+
+            <p>Dmg: ${w.damage} | Scope: ${w.scope ? 'Yes' : 'No'}</p>
+
+            <div class="price">${w.cost === 0 ? 'FREE' : w.cost + ' Coins'}</div>
+
+          </div>
+
+          <div>
+
+            ${owned ? `<button class="menu-btn secondary" style="width:100%; padding:8px; font-size:14px;" disabled>Owned</button>` :
+
+              `<button class="menu-btn" style="width:100%; padding:8px; font-size:14px;" onclick="buyWeapon('${key}')">Buy</button>`
+
+            }
+
+          </div>
+
+        `;
+
+        grid.appendChild(card);
+
+      }
+
+    }
+
+
+
+    function buyWeapon(key) {
+
+      const w = weapons[key];
+
+      if (coins >= w.cost) {
+
+        coins -= w.cost;
+
+        inventory.push(key);
+
+        localStorage.setItem('ur_inventory', JSON.stringify(inventory));
+
+        updateCoinDisplays();
+
+        renderShop();
+
+      } else {
+
+        alert("Not enough coins!");
+
+      }
+
+    }
+
+
+
+    const scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x5cb3ff); 
+
+    scene.fog = new THREE.FogExp2(0x5cb3ff, 0.001);
+
+
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    renderer.shadowMap.enabled = true;
+
+    document.body.appendChild(renderer.domElement);
+
+
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+
+    scene.add(ambientLight);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+
+    sun.position.set(200, 400, 100);
+
+    sun.castShadow = true;
+
+    scene.add(sun);
+
+
+
+    let aliveCount = 100;
+
+    let playerHp = 100;
+
+    let isGameOver = false;
+
+    let gameStarted = false;
+
+    let isScoped = false;
+
+
+
+    const collidables = [];
+
+    const chests = [];
+
+    const islandRadius = 1200;
+
+
+
+    const groundGeo = new THREE.CylinderGeometry(islandRadius, islandRadius, 4, 32);
+
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x3cb371, roughness: 0.8 });
+
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+
+    ground.position.y = -2;
+
+    ground.receiveShadow = true;
+
+    scene.add(ground);
+
+    collidables.push(ground);
+
+
+
+    const treeMat = new THREE.MeshStandardMaterial({ color: 0x2d4c1e, roughness: 0.9 });
+
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 });
+
+    const chestMat = new THREE.MeshStandardMaterial({ color: 0x8b4513, roughness: 0.5 });
+
+    const chestGoldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.3 });
+
+
+
+    function spawnTreesAndChests() {
+
+      for (let i = 0; i < 70; i++) {
+
+        const treeGroup = new THREE.Group();
+
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.5, 8), trunkMat);
+
+        trunk.position.y = 4;
+
+        trunk.castShadow = true;
+
+        treeGroup.add(trunk);
+
+
+
+        const leaves = new THREE.Mesh(new THREE.ConeGeometry(5, 12, 6), treeMat);
+
+        leaves.position.y = 11;
+
+        leaves.castShadow = true;
+
+        treeGroup.add(leaves);
+
+
+
+        const angle = Math.random() * Math.PI * 2;
+
+        const dist = 60 + Math.random() * (islandRadius - 150);
+
+        const tx = Math.cos(angle) * dist;
+
+        const tz = Math.sin(angle) * dist;
+
+        treeGroup.position.set(tx, 0, tz);
+
+        scene.add(treeGroup);
+
+        collidables.push(treeGroup);
+
+
+
+        const chestGroup = new THREE.Group();
+
+        const chestBox = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 1.8), chestMat);
+
+        chestBox.position.y = 0.6;
+
+        chestBox.castShadow = true;
+
+        chestGroup.add(chestBox);
+
+
+
+        const latch = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.2), chestGoldMat);
+
+        latch.position.set(0, 0.6, 0.91);
+
+        chestGroup.add(latch);
+
+
+
+        const chestOffsetAngle = Math.random() * Math.PI * 2;
+
+        const chestDist = 3 + Math.random() * 4;
+
+        chestGroup.position.set(tx + Math.cos(chestOffsetAngle)*chestDist, 0, tz + Math.sin(chestOffsetAngle)*chestDist);
+
+        scene.add(chestGroup);
+
+
+
+        chests.push({ mesh: chestGroup, opened: false, position: chestGroup.position });
+
+      }
+
+    }
+
+    spawnTreesAndChests();
+
+
+
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.6 });
+
+    function createStructure(geo, yOffset, rx, rz, isRamp=false) {
+
+      const mesh = new THREE.Mesh(geo, woodMat);
+
+      mesh.position.set(rx, yOffset, rz);
+
+      if(isRamp) mesh.rotation.x = Math.PI / 6;
+
+      mesh.castShadow = true;
+
+      mesh.receiveShadow = true;
+
+      scene.add(mesh);
+
+      collidables.push(mesh);
+
+      return mesh;
+
+    }
+
+    
+
+    function buildWall() {
+
+      if (!gameStarted || isGameOver) return;
+
+      const g = new THREE.BoxGeometry(10, 8, 0.4);
+
+      const m = createStructure(g, playerGroup.position.y + 3, playerGroup.position.x - Math.sin(yaw)*6, playerGroup.position.z - Math.cos(yaw)*6);
+
+      m.rotation.y = yaw;
+
+    }
+
+    function buildFloor() {
+
+      if (!gameStarted || isGameOver) return;
+
+      const g = new THREE.BoxGeometry(10, 0.4, 10);
+
+      createStructure(g, playerGroup.position.y - 1.8, playerGroup.position.x - Math.sin(yaw)*5, playerGroup.position.z - Math.cos(yaw)*5);
+
+    }
+
+    function buildRamp() {
+
+      if (!gameStarted || isGameOver) return;
+
+      const g = new THREE.BoxGeometry(10, 0.4, 12);
+
+      const m = createStructure(g, playerGroup.position.y + 1, playerGroup.position.x - Math.sin(yaw)*6, playerGroup.position.z - Math.cos(yaw)*6, true);
+
+      m.rotation.y = yaw;
+
+    }
+
+
+
+    const playerGroup = new THREE.Group();
+
+    playerGroup.position.set(0, 3, 0);
+
+    scene.add(playerGroup);
+
+    playerGroup.add(camera);
+
+
+
+    const gun = new THREE.Group();
+
+    const gBody = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.25, 1.1), new THREE.MeshStandardMaterial({ color: 0x222222 }));
+
+    gun.add(gBody);
+
+    gun.position.set(0.35, -0.3, -0.6);
+
+    camera.add(gun);
+
+
+
+    const remotePlayers = {};
+
+    const remotePlayerData = {};
+
+
+
+    function createCharacterAvatar(isBot = false) {
+
+      const group = new THREE.Group();
+
+      group.scale.set(1, 1, 1);
+
+      
+
+      const torso = new THREE.Mesh(
+
+        new THREE.BoxGeometry(0.5, 0.7, 0.25),
+
+        new THREE.MeshStandardMaterial({ color: isBot ? 0xff4500 : 0x1e90ff, roughness: 0.5 })
+
+      );
+
+      torso.position.y = 0.85;
+
+      torso.castShadow = true;
+
+      group.add(torso);
+
+
+
+      const head = new THREE.Mesh(
+
+        new THREE.SphereGeometry(0.22, 16, 16),
+
+        new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.6 })
+
+      );
+
+      head.position.y = 1.38;
+
+      head.castShadow = true;
+
+      group.add(head);
+
+
+
+      const helmet = new THREE.Mesh(
+
+        new THREE.BoxGeometry(0.28, 0.12, 0.28),
+
+        new THREE.MeshStandardMaterial({ color: isBot ? 0x990000 : 0x333333, roughness: 0.4 })
+
+      );
+
+      helmet.position.y = 1.52;
+
+      group.add(helmet);
+
+
+
+      const legMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 });
+
+      const leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.55, 0.18), legMat);
+
+      leftLeg.position.set(-0.12, 0.27, 0);
+
+      leftLeg.castShadow = true;
+
+      group.add(leftLeg);
+
+
+
+      const rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.55, 0.18), legMat);
+
+      rightLeg.position.set(0.12, 0.27, 0);
+
+      rightLeg.castShadow = true;
+
+      group.add(rightLeg);
+
+
+
+      return group;
+
+    }
+
+
+
+    function updateRemotePlayer(data) {
+
+      if (!remotePlayers[data.id]) {
+
+        const rMesh = createCharacterAvatar(false);
+
+        scene.add(rMesh);
+
+        remotePlayers[data.id] = rMesh;
+
+      }
+
+      remotePlayers[data.id].position.set(data.x, 0, data.z);
+
+      remotePlayers[data.id].rotation.y = data.yaw;
+
+      remotePlayerData[data.id] = { x: data.x, z: data.z };
+
+    }
+
+
+
+    function spawnSoloBots() {
+
+      soloBots.forEach(b => scene.remove(b.mesh));
+
+      soloBots = [];
+
+      
+
+      const numBots = 15;
+
+      aliveCount = numBots + 1;
+
+      document.getElementById('alive-count').innerText = aliveCount;
+
+
+
+      for (let i = 0; i < numBots; i++) {
+
+        const mesh = createCharacterAvatar(true);
+
+        const angle = Math.random() * Math.PI * 2;
+
+        const dist = 60 + Math.random() * (islandRadius - 200);
+
+        mesh.position.set(Math.cos(angle) * dist, 0, Math.sin(angle) * dist);
+
+        scene.add(mesh);
+
+        
+
+        soloBots.push({
+
+          id: 'bot_' + i,
+
+          mesh: mesh,
+
+          hp: 100,
+
+          alive: true,
+
+          moveTarget: new THREE.Vector3(Math.cos(angle)*dist, 0, Math.sin(angle)*dist),
+
+          speed: 0.035 + Math.random() * 0.025
+
+        });
+
+      }
+
+    }
+
+
+
+    let velocityY = 0;
+
+    let isGrounded = false;
+
+    const keys = {};
+
+    let yaw = 0, pitch = 0;
+
+
+
+    window.addEventListener('keydown', (e) => {
+
+      const k = e.key.toLowerCase();
+
+      keys[k] = true;
+
+      if (k === ' ') jump();
+
+      if (k === 'q') buildWall();
+
+      if (k === 'e') buildFloor();
+
+      if (k === 'f') buildRamp();
+
+      if (k === 'r') openNearestChest();
+
+      if (k === '1') selectSlot(0);
+
+      if (k === '2') selectSlot(1);
+
+      if (k === '3') selectSlot(2);
+
+    });
+
+    window.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
+
+
+
+    function selectSlot(idx) {
+
+      activeSlotIndex = idx;
+
+      updateHotbarUI();
+
+      isScoped = false;
+
+      document.getElementById('scope-overlay').style.display = 'none';
+
+      camera.fov = 75;
+
+      camera.updateProjectionMatrix();
+
+    }
+
+
+
+    function jump() { if (isGrounded && gameStarted && !isGameOver) { velocityY = 0.22; isGrounded = false; } }
+
+
+
+    let joyX = 0, joyY = 0;
+
+    let jTouchId = null;
+
+    const jZone = document.getElementById('joystick-zone');
+
+    const jKnob = document.getElementById('joystick-knob');
+
+
+
+    function updateJoystick(touch) {
+
+      const rect = jZone.getBoundingClientRect();
+
+      let dx = touch.clientX - (rect.left + rect.width / 2);
+
+      let dy = touch.clientY - (rect.top + rect.height / 2);
+
+      const maxDist = 35;
+
+      const dist = Math.hypot(dx, dy);
+
+      if(dist > maxDist) { dx = (dx/dist)*maxDist; dy = (dy/dist)*maxDist; }
+
+      jKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+
+      joyX = dx / maxDist; joyY = dy / maxDist;
+
+    }
+
+
+
+    jZone.addEventListener('touchstart', (e) => { e.preventDefault(); jTouchId = e.changedTouches[0].identifier; updateJoystick(e.changedTouches[0]); }, {passive: false});
+
+    jZone.addEventListener('touchmove', (e) => {
+
+      e.preventDefault();
+
+      for(let t of e.changedTouches) { if(t.identifier === jTouchId) updateJoystick(t); }
+
+    }, {passive: false});
+
+    const resetJoy = () => { jTouchId = null; joyX = 0; joyY = 0; jKnob.style.transform = `translate(0px, 0px)`; };
+
+    jZone.addEventListener('touchend', resetJoy); jZone.addEventListener('touchcancel', resetJoy);
+
+
+
+    let lookTouchId = null, isDragging = false, prevX = 0, prevY = 0;
+
+    window.addEventListener('touchstart', (e) => {
+
+      if (!gameStarted || isGameOver) return;
+
+      if (e.target.closest('#joystick-zone') || e.target.classList.contains('touch-btn')) return;
+
+      for(let i=0; i<e.changedTouches.length; i++) {
+
+        if(!lookTouchId) {
+
+          lookTouchId = e.changedTouches[i].identifier;
+
+          isDragging = true; prevX = e.changedTouches[i].clientX; prevY = e.changedTouches[i].clientY;
+
+        }
+
+      }
+
+    }, {passive: false});
+
+    window.addEventListener('touchmove', (e) => {
+
+      for(let i=0; i<e.changedTouches.length; i++) {
+
+        const touch = e.changedTouches[i];
+
+        if (isDragging && touch.identifier === lookTouchId) {
+
+          yaw -= (touch.clientX - prevX) * 0.005;
+
+          pitch -= (touch.clientY - prevY) * 0.005;
+
+          pitch = Math.max(-1.4, Math.min(1.4, pitch));
+
+          prevX = touch.clientX; prevY = touch.clientY;
+
+        }
+
+      }
+
+    }, {passive: false});
+
+    window.addEventListener('touchend', (e) => {
+
+      for(let i=0; i<e.changedTouches.length; i++) {
+
+        if (e.changedTouches[i].identifier === lookTouchId) { isDragging = false; lookTouchId = null; }
+
+      }
+
+    });
+
+
+
+    document.body.addEventListener('click', (e) => {
+
+      if (!gameStarted || isGameOver) return;
+
+      if (e.target.tagName !== 'DIV') document.body.requestPointerLock();
+
+    });
+
+    document.addEventListener('mousemove', (e) => {
+
+      if (document.pointerLockElement === document.body && gameStarted && !isGameOver) {
+
+        yaw -= e.movementX * 0.0025;
+
+        pitch -= e.movementY * 0.0025;
+
+        pitch = Math.max(-1.4, Math.min(1.4, pitch));
+
+      }
+
+    });
+
+
+
+    window.addEventListener('mousedown', (e) => {
+
+      if (!gameStarted || isGameOver) return;
+
+      const currentWeaponKey = matchSlots[activeSlotIndex];
+
+      const w = currentWeaponKey ? weapons[currentWeaponKey] : null;
+
+      if (e.button === 2 && w && w.scope) {
+
+        isScoped = !isScoped;
+
+        document.getElementById('scope-overlay').style.display = isScoped ? 'block' : 'none';
+
+        camera.fov = isScoped ? w.fov : 75;
+
+        camera.updateProjectionMatrix();
+
+        e.preventDefault();
+
+      } else if (e.button === 0 && document.pointerLockElement === document.body) {
+
+        shoot();
+
+      }
+
+    });
+
+    window.addEventListener('contextmenu', e => e.preventDefault());
+
+
+
+    document.getElementById('btn-fire').addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); });
+
+    document.getElementById('btn-jump').addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+
+    document.getElementById('btn-wall').addEventListener('touchstart', (e) => { e.preventDefault(); buildWall(); });
+
+    document.getElementById('btn-ramp').addEventListener('touchstart', (e) => { e.preventDefault(); buildRamp(); });
+
+    document.getElementById('btn-floor').addEventListener('touchstart', (e) => { e.preventDefault(); buildFloor(); });
+
+
+
+    const crosshair = document.getElementById('crosshair');
+
+    const raycaster = new THREE.Raycaster();
+
+
+
+    function giveWeaponToInventory(weaponKey) {
+
+      let slotIdx = matchSlots.indexOf(null);
+
+      if (slotIdx === -1) slotIdx = activeSlotIndex;
+
+      matchSlots[slotIdx] = weaponKey;
+
+      updateHotbarUI();
+
+      showNotification(`🎉 Found ${weapons[weaponKey].name}!`);
+
+    }
+
+
+
+    function openNearestChest() {
+
+      if (!gameStarted || isGameOver) return;
+
+      const pPos = playerGroup.position;
+
+      let nearest = null, minDist = 5.0;
+
+      for (let c of chests) {
+
+        if (c.opened) continue;
+
+        const dist = c.position.distanceTo(pPos);
+
+        if (dist < minDist) { minDist = dist; nearest = c; }
+
+      }
+
+      if (nearest) {
+
+        nearest.opened = true;
+
+        nearest.mesh.position.y -= 0.5;
+
+        const possibleLoot = ['shotgun', 'sniper', 'mythic'];
+
+        const loot = possibleLoot[Math.floor(Math.random() * possibleLoot.length)];
+
+        giveWeaponToInventory(loot);
+
+      }
+
+    }
+
+
+
+    function shoot() {
+
+      if (!gameStarted || isGameOver) return;
+
+      const currentWeaponKey = matchSlots[activeSlotIndex];
+
+      if (!currentWeaponKey) return;
+
+      gun.position.z = -0.4; 
+
+
+
+      raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+
+      const targetObjects = [];
+
+      for (let id in remotePlayers) {
+
+        targetObjects.push(remotePlayers[id]);
+
+      }
+
+      if (isSoloMode) {
+
+        soloBots.forEach(b => {
+
+          if (b.alive) targetObjects.push(b.mesh);
+
+        });
+
+      }
+
+      
+
+      const hits = raycaster.intersectObjects(targetObjects, true);
+
+
+
+      if (hits.length > 0) {
+
+        const hitObj = hits[0].object;
+
+        let hitHandled = false;
+
+
+
+        for (let id in remotePlayers) {
+
+          let isThisPlayer = false;
+
+          remotePlayers[id].traverse(child => {
+
+            if (child === hitObj) isThisPlayer = true;
+
+          });
+
+          if (isThisPlayer) {
+
+            const dmg = weapons[currentWeaponKey].damage;
+
+            if (conn && conn.open) {
+
+              conn.send({ type: 'PLAYER_HIT', targetId: id, damage: dmg, shooter: username });
+
+            }
+
+            showNotification(`🎯 Hit player for ${dmg} DMG!`);
+
+            hitHandled = true;
+
+            break;
+
+          }
+
+        }
+
+
+
+        if (!hitHandled && isSoloMode) {
+
+          for (let bot of soloBots) {
+
+            if (!bot.alive) continue;
+
+            let isThisBot = false;
+
+            bot.mesh.traverse(child => {
+
+              if (child === hitObj) isThisBot = true;
+
+            });
+
+            if (isThisBot) {
+
+              const dmg = weapons[currentWeaponKey].damage;
+
+              bot.hp -= dmg;
+
+              showNotification(`🎯 Hit Bot for ${dmg} DMG! (${Math.max(0, bot.hp)} HP left)`);
+
+              if (bot.hp <= 0) {
+
+                bot.alive = false;
+
+                scene.remove(bot.mesh);
+
+                delete remotePlayerData[bot.id];
+
+                aliveCount--;
+
+                document.getElementById('alive-count').innerText = Math.max(1, aliveCount);
+
+                showNotification(`💀 Eliminated Bot! (${aliveCount - 1} opponents left)`);
+
+                
+
+                const remainingBots = soloBots.filter(b => b.alive).length;
+
+                if (remainingBots === 0) {
+
+                  document.getElementById('victory-sub').innerText = `You eliminated all bots and conquered the island!`;
+
+                  document.getElementById('victory-banner').style.display = 'flex';
+
+                  if (document.pointerLockElement) document.exitPointerLock();
+
+                }
+
+              }
+
+              hitHandled = true;
+
+              break;
+
+            }
+
+          }
+
+        }
+
+      }
+
+      
+
+      crosshair.classList.add('hit');
+
+      setTimeout(() => crosshair.classList.remove('hit'), 100);
+
+    }
+
+
+
+    function startGame() {
+
+      document.getElementById('main-menu').style.display = 'none';
+
+      document.getElementById('menu-real-players').style.display = 'none';
+
+      document.getElementById('minimap-container').style.display = 'block';
+
+      document.getElementById('fps').style.display = 'block';
+
+      document.getElementById('alive-box').style.display = 'block';
+
+      document.getElementById('hp-box').style.display = 'block';
+
+      document.getElementById('crosshair').style.display = 'block';
+
+      document.getElementById('hotbar').style.display = 'flex';
+
+      document.getElementById('build-menu').style.display = 'flex';
+
+      
+
+      if (window.innerWidth <= 1024) {
+
+        document.getElementById('joystick-zone').style.display = 'block';
+
+        ['btn-fire', 'btn-jump', 'btn-wall', 'btn-ramp', 'btn-floor'].forEach(id => {
+
+          document.getElementById(id).style.display = 'flex';
+
+        });
+
+      }
+
+
+
+      gameStarted = true;
+
+      playerGroup.position.set(0, 3, 0);
+
+      velocityY = 0; yaw = 0; pitch = 0;
+
+      matchKills = 0; 
+
+
+
+      if (isSoloMode) {
+
+        spawnSoloBots();
+
+      } else {
+
+        aliveCount = connectedPeers.length || 1;
+
+        document.getElementById('alive-count').innerText = aliveCount;
+
+      }
+
+
+
+      matchSlots = [inventory[0] || 'pistol', null, null];
+
+      updateHotbarUI();
+
+      document.body.requestPointerLock();
+
+    }
+
+
+
+    function startSolo() {
+
+      isSoloMode = true;
+
+      startGame();
+
+    }
+
+
+
+    function returnToMenu() {
+
+      location.reload();
+
+    }
+
+
+
+    const minimapCanvas = document.getElementById('minimap-canvas');
+
+    const mCtx = minimapCanvas.getContext('2d');
+
+
+
+    function renderMinimap() {
+
+      if (!gameStarted || isGameOver) return;
+
+      mCtx.clearRect(0, 0, 130, 130);
+
+
+
+      mCtx.fillStyle = 'rgba(40, 120, 60, 0.85)';
+
+      mCtx.beginPath();
+
+      mCtx.arc(65, 65, 60, 0, Math.PI * 2);
+
+      mCtx.fill();
+
+      mCtx.lineWidth = 2;
+
+      mCtx.strokeStyle = '#00ff88';
+
+      mCtx.stroke();
+
+
+
+      const pPos = playerGroup.position;
+
+      const mapScale = 60 / islandRadius;
+
+
+
+      for (let id in remotePlayerData) {
+
+        const rp = remotePlayerData[id];
+
+        const dx = (rp.x - pPos.x) * mapScale;
+
+        const dz = (rp.z - pPos.z) * mapScale;
+
+        const dist = Math.hypot(dx, dz);
+
+        
+
+        let mx = 65 + dx;
+
+        let mz = 65 + dz;
+
+        if (dist > 52) {
+
+          mx = 65 + (dx / dist) * 52;
+
+          mz = 65 + (dz / dist) * 52;
+
+        }
+
+
+
+        mCtx.fillStyle = isSoloMode ? '#ff4500' : '#00d2ff';
+
+        mCtx.beginPath();
+
+        mCtx.arc(mx, mz, 4, 0, Math.PI * 2);
+
+        mCtx.fill();
+
+        mCtx.strokeStyle = '#fff';
+
+        mCtx.lineWidth = 1;
+
+        mCtx.stroke();
+
+      }
+
+
+
+      mCtx.fillStyle = '#00ff00';
+
+      mCtx.beginPath();
+
+      mCtx.arc(65, 65, 5, 0, Math.PI * 2);
+
+      mCtx.fill();
+
+      mCtx.strokeStyle = '#fff';
+
+      mCtx.lineWidth = 1.5;
+
+      mCtx.stroke();
+
+
+
+      mCtx.strokeStyle = '#ffd700';
+
+      mCtx.lineWidth = 2;
+
+      mCtx.beginPath();
+
+      mCtx.moveTo(65, 65);
+
+      mCtx.lineTo(65 - Math.sin(yaw) * 12, 65 - Math.cos(yaw) * 12);
+
+      mCtx.stroke();
+
+    }
+
+
+
+    let lastTime = performance.now();
+
+    let frameCount = 0;
+
+    let then = performance.now();
+
+    const raycasterDown = new THREE.Raycaster();
+
+    let netSyncTimer = 0;
+
+
+
+    function animate(now) {
+
+      requestAnimationFrame(animate);
+
+
+
+      const fpsInterval = 1000 / fpsCap;
+
+      const elapsed = now - then;
+
+
+
+      if (elapsed > fpsInterval) {
+
+        then = now - (elapsed % fpsInterval);
+
+
+
+        frameCount++;
+
+        if (now - lastTime >= 500) {
+
+          document.getElementById('fps').innerText = `FPS: ${Math.round((frameCount * 1000) / (now - lastTime))}`;
+
+          frameCount = 0; lastTime = now;
+
+        }
+
+
+
+        gun.position.z += (-0.6 - gun.position.z) * 0.1; 
+
+        camera.rotation.order = "YXZ"; camera.rotation.y = yaw; camera.rotation.x = pitch;
+
+
+
+        if (gameStarted && !isGameOver) {
+
+          const pPos = playerGroup.position;
+
+          let nearChest = false;
+
+          for (let c of chests) {
+
+            if (!c.opened && c.position.distanceTo(pPos) < 5.0) { nearChest = true; break; }
+
+          }
+
+          document.getElementById('chest-prompt').style.display = nearChest ? 'block' : 'none';
+
+
+
+          if (isSoloMode) {
+
+            soloBots.forEach(bot => {
+
+              if (!bot.alive) return;
+
+              bot.mesh.position.y = 0;
+
+              const distToPlayer = bot.mesh.position.distanceTo(pPos);
+
+              if (distToPlayer < 220) {
+
+                bot.mesh.lookAt(pPos.x, bot.mesh.position.y, pPos.z);
+
+                const dir = new THREE.Vector3().subVectors(pPos, bot.mesh.position).normalize();
+
+                bot.mesh.position.addScaledVector(dir, bot.speed);
+
+              } else {
+
+                if (bot.mesh.position.distanceTo(bot.moveTarget) < 10) {
+
+                  const a = Math.random() * Math.PI * 2;
+
+                  const d = 50 + Math.random() * 200;
+
+                  bot.moveTarget.set(Math.cos(a)*d, 0, Math.sin(a)*d);
+
+                }
+
+                bot.mesh.lookAt(bot.moveTarget.x, bot.mesh.position.y, bot.moveTarget.z);
+
+                const dir = new THREE.Vector3().subVectors(bot.moveTarget, bot.mesh.position).normalize();
+
+                bot.mesh.position.addScaledVector(dir, bot.speed);
+
+              }
+
+              remotePlayerData[bot.id] = { x: bot.mesh.position.x, z: bot.mesh.position.z };
+
+            });
+
+          } else {
+
+            netSyncTimer++;
+
+            if (netSyncTimer > 5 && conn && conn.open) {
+
+              conn.send({
+
+                type: 'PLAYER_POS',
+
+                id: myPeerId,
+
+                x: pPos.x, y: 0, z: pPos.z,
+
+                yaw: yaw
+
+              });
+
+              netSyncTimer = 0;
+
+            }
+
+          }
+
+
+
+          renderMinimap();
+
+        }
+
+
+
+        if (gameStarted && !isGameOver) {
+
+          const speed = 0.085;
+
+          const moveVec = new THREE.Vector3();
+
+          
+
+          if (keys['w']) moveVec.z -= 1;
+
+          if (keys['s']) moveVec.z += 1;
+
+          if (keys['a']) moveVec.x -= 1;
+
+          if (keys['d']) moveVec.x += 1;
+
+          
+
+          if (joyY < -0.1) moveVec.z -= Math.abs(joyY);
+
+          if (joyY > 0.1) moveVec.z += Math.abs(joyY);
+
+          if (joyX < -0.1) moveVec.x -= Math.abs(joyX);
+
+          if (joyX > 0.1) moveVec.x += Math.abs(joyX);
+
+
+
+          moveVec.normalize();
+
+          moveVec.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+
+          
+
+          const oldPos = playerGroup.position.clone();
+
+          playerGroup.position.addScaledVector(moveVec, speed);
+
+
+
+          const playerBox = new THREE.Box3().setFromCenterAndSize(
+
+            new THREE.Vector3(playerGroup.position.x, playerGroup.position.y, playerGroup.position.z),
+
+            new THREE.Vector3(1.0, 3.2, 1.0)
+
+          );
+
+          for (let i = 1; i < collidables.length; i++) {
+
+            const objBox = new THREE.Box3().setFromObject(collidables[i]);
+
+            if (playerBox.intersectsBox(objBox)) { playerGroup.position.copy(oldPos); break; }
+
+          }
+
+
+
+          velocityY -= 0.009;
+
+          playerGroup.position.y += velocityY;
+
+          raycasterDown.set(playerGroup.position, new THREE.Vector3(0, -1, 0));
+
+          const groundHits = raycasterDown.intersectObjects(collidables, true);
+
+          if (groundHits.length > 0 && groundHits[0].distance <= 1.8 && velocityY <= 0) {
+
+            playerGroup.position.y = groundHits[0].point.y + 1.8; velocityY = 0; isGrounded = true;
+
+          }
+
+        }
+
+
+
+        renderer.render(scene, camera);
+
+      }
+
+    }
+
+
+
+    animate(performance.now());
+
+    window.addEventListener('resize', () => {
+
+      camera.aspect = window.innerWidth / window.innerHeight; 
+
+      camera.updateProjectionMatrix(); 
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+    });
+
+  </script>
+
+</body>
+
+</html>
+
+The sniper and scoped weapons already had some underlying variables, but mouse control, sensitivity scaling during zoom, gun mesh hiding, and proper right-click aim toggling needed fixes to work cleanly together.
+
+Here is the complete updated file:
+
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -139,11 +2610,17 @@
     }
 
     #scope-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; display: none;
-      background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.95) 100%);
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 50; display: none;
+      background: radial-gradient(circle at center, transparent 180px, rgba(0,0,0,0.95) 280px, #000 100%);
     }
-    #scope-overlay::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(0,255,0,0.7); }
-    #scope-overlay::after { content: ''; position: absolute; top: 0; left: 50%; width: 2px; height: 100%; background: rgba(0,255,0,0.7); }
+    #scope-overlay::before {
+      content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px;
+      background: rgba(0,255,100,0.75); transform: translateY(-50%);
+    }
+    #scope-overlay::after {
+      content: ''; position: absolute; top: 0; left: 50%; width: 2px; height: 100%;
+      background: rgba(0,255,100,0.75); transform: translateX(-50%);
+    }
 
     #hotbar {
       position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
@@ -166,9 +2643,10 @@
 
     .touch-btn { position: absolute; z-index: 40; background: rgba(255, 255, 255, 0.25); border: 2px solid #fff; color: #fff; border-radius: 50%; width: 60px; height: 60px; display: none; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
     #btn-fire { bottom: 30px; right: 30px; background: rgba(255, 50, 50, 0.6); width: 80px; height: 80px; font-size: 16px; }
+    #btn-scope { bottom: 120px; right: 100px; background: rgba(0, 200, 255, 0.6); }
     #btn-jump { bottom: 130px; right: 30px; background: rgba(50, 150, 255, 0.6); }
     #btn-wall { bottom: 30px; right: 130px; background: rgba(255, 170, 0, 0.6); }
-    #btn-ramp { bottom: 100px; right: 110px; background: rgba(255, 170, 0, 0.6); }
+    #btn-ramp { bottom: 100px; right: 180px; background: rgba(255, 170, 0, 0.6); }
     #btn-floor { bottom: 170px; right: 80px; background: rgba(255, 170, 0, 0.6); }
 
     @media (min-width: 1024px) {
@@ -294,6 +2772,7 @@
 
   <div id="joystick-zone"><div id="joystick-knob"></div></div>
   <div id="btn-fire" class="touch-btn">FIRE</div>
+  <div id="btn-scope" class="touch-btn">ADS</div>
   <div id="btn-jump" class="touch-btn">JUMP</div>
   <div id="btn-wall" class="touch-btn">WALL</div>
   <div id="btn-ramp" class="touch-btn">RAMP</div>
@@ -313,7 +2792,7 @@
     const weapons = {
       pistol: { name: 'Pistol', damage: 35, cost: 0, scope: false },
       shotgun: { name: 'Shotgun', damage: 45, cost: 50, scope: false },
-      sniper: { name: 'Sniper', damage: 50, cost: 1500, scope: true, fov: 25 },
+      sniper: { name: 'Sniper', damage: 50, cost: 1500, scope: true, fov: 20 },
       mythic: { name: 'Falcon Scout', damage: 100, cost: 3500, scope: true, fov: 15 }
     };
 
@@ -793,6 +3272,34 @@
     const keys = {};
     let yaw = 0, pitch = 0;
 
+    function toggleScope(forceState = null) {
+      if (!gameStarted || isGameOver) return;
+      const currentWeaponKey = matchSlots[activeSlotIndex];
+      const w = currentWeaponKey ? weapons[currentWeaponKey] : null;
+
+      if (!w || !w.scope) {
+        isScoped = false;
+      } else {
+        isScoped = (forceState !== null) ? forceState : !isScoped;
+      }
+
+      const scopeOverlay = document.getElementById('scope-overlay');
+      const crosshairEl = document.getElementById('crosshair');
+
+      if (isScoped && w && w.scope) {
+        scopeOverlay.style.display = 'block';
+        crosshairEl.style.display = 'none';
+        gun.visible = false;
+        camera.fov = w.fov || 20;
+      } else {
+        scopeOverlay.style.display = 'none';
+        crosshairEl.style.display = 'block';
+        gun.visible = true;
+        camera.fov = 75;
+      }
+      camera.updateProjectionMatrix();
+    }
+
     window.addEventListener('keydown', (e) => {
       const k = e.key.toLowerCase();
       keys[k] = true;
@@ -810,10 +3317,7 @@
     function selectSlot(idx) {
       activeSlotIndex = idx;
       updateHotbarUI();
-      isScoped = false;
-      document.getElementById('scope-overlay').style.display = 'none';
-      camera.fov = 75;
-      camera.updateProjectionMatrix();
+      toggleScope(false);
     }
 
     function jump() { if (isGrounded && gameStarted && !isGameOver) { velocityY = 0.22; isGrounded = false; } }
@@ -857,8 +3361,9 @@
       for(let i=0; i<e.changedTouches.length; i++) {
         const touch = e.changedTouches[i];
         if (isDragging && touch.identifier === lookTouchId) {
-          yaw -= (touch.clientX - prevX) * 0.005;
-          pitch -= (touch.clientY - prevY) * 0.005;
+          const sens = isScoped ? 0.002 : 0.005;
+          yaw -= (touch.clientX - prevX) * sens;
+          pitch -= (touch.clientY - prevY) * sens;
           pitch = Math.max(-1.4, Math.min(1.4, pitch));
           prevX = touch.clientX; prevY = touch.clientY;
         }
@@ -872,33 +3377,35 @@
 
     document.body.addEventListener('click', (e) => {
       if (!gameStarted || isGameOver) return;
-      if (e.target.tagName !== 'DIV') document.body.requestPointerLock();
+      if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
+        document.body.requestPointerLock();
+      }
     });
+    
     document.addEventListener('mousemove', (e) => {
       if (document.pointerLockElement === document.body && gameStarted && !isGameOver) {
-        yaw -= e.movementX * 0.0025;
-        pitch -= e.movementY * 0.0025;
+        const sens = isScoped ? 0.0009 : 0.0025;
+        yaw -= e.movementX * sens;
+        pitch -= e.movementY * sens;
         pitch = Math.max(-1.4, Math.min(1.4, pitch));
       }
     });
 
     window.addEventListener('mousedown', (e) => {
       if (!gameStarted || isGameOver) return;
-      const currentWeaponKey = matchSlots[activeSlotIndex];
-      const w = currentWeaponKey ? weapons[currentWeaponKey] : null;
-      if (e.button === 2 && w && w.scope) {
-        isScoped = !isScoped;
-        document.getElementById('scope-overlay').style.display = isScoped ? 'block' : 'none';
-        camera.fov = isScoped ? w.fov : 75;
-        camera.updateProjectionMatrix();
+      if (e.button === 2) {
         e.preventDefault();
-      } else if (e.button === 0 && document.pointerLockElement === document.body) {
-        shoot();
+        toggleScope();
+      } else if (e.button === 0) {
+        if (document.pointerLockElement === document.body) {
+          shoot();
+        }
       }
     });
     window.addEventListener('contextmenu', e => e.preventDefault());
 
     document.getElementById('btn-fire').addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); });
+    document.getElementById('btn-scope').addEventListener('touchstart', (e) => { e.preventDefault(); toggleScope(); });
     document.getElementById('btn-jump').addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
     document.getElementById('btn-wall').addEventListener('touchstart', (e) => { e.preventDefault(); buildWall(); });
     document.getElementById('btn-ramp').addEventListener('touchstart', (e) => { e.preventDefault(); buildRamp(); });
@@ -1022,7 +3529,7 @@
       
       if (window.innerWidth <= 1024) {
         document.getElementById('joystick-zone').style.display = 'block';
-        ['btn-fire', 'btn-jump', 'btn-wall', 'btn-ramp', 'btn-floor'].forEach(id => {
+        ['btn-fire', 'btn-scope', 'btn-jump', 'btn-wall', 'btn-ramp', 'btn-floor'].forEach(id => {
           document.getElementById(id).style.display = 'flex';
         });
       }
@@ -1041,6 +3548,7 @@
 
       matchSlots = [inventory[0] || 'pistol', null, null];
       updateHotbarUI();
+      toggleScope(false);
       document.body.requestPointerLock();
     }
 
@@ -1229,3 +3737,7 @@
   </script>
 </body>
 </html>
+
+
+
+
